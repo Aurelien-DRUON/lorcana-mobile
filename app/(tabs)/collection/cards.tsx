@@ -1,19 +1,24 @@
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, Button } from "react-native";
 import { useGetCards } from "../../../hooks/useGetCards";
 import Card from "../../../components/Card";
 import { useGetSets } from "../../../hooks/useGetSets";
+import { useGetAccountCards } from "../../../hooks/useGetAccountCards";
 
 export default function CardsScreen() {
   const { id } = useLocalSearchParams();
   const navigation = useNavigation();
   const [cards, setCards] = useState([]);
+  const [filteredCards, setFilteredCards] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
+  const [owned, setOwned] = useState([]);
 
   const handleCards = useCallback(async (id: number) => {
     const response = await useGetCards(id);
     if (response) {
       setCards(response);
+      setFilteredCards(response);
     }
   }, []);
 
@@ -26,15 +31,47 @@ export default function CardsScreen() {
     }
   }, []);
 
+  const handleWishlist = useCallback(async () => {
+    const response = await useGetAccountCards();
+    if (response) {
+      setWishlist(response);
+    }
+  }, []);
+
+  const handleOwned = useCallback(async () => {
+    const response = await useGetAccountCards();
+    console.log(response);
+    if (response) {
+      setOwned(response);
+    }
+  }, []);
+
   useEffect(() => {
     handleSets(Number(id));
     handleCards(Number(id));
+    handleWishlist();
+    handleOwned();
   }, [handleCards]);
 
   return (
     <View style={styles.container}>
+      <View style={styles.buttonContainer}>
+        <Button title="Toutes" onPress={() => setFilteredCards(cards)} />
+        <Button
+          title="Possédés"
+          onPress={() =>
+            setFilteredCards(cards.filter((card) => owned.includes(card.id)))
+          }
+        />
+        <Button
+          title="Voulues"
+          onPress={() =>
+            setFilteredCards(cards.filter((card) => wishlist.includes(card.id)))
+          }
+        />
+      </View>
       <FlatList
-        data={cards}
+        data={filteredCards}
         showsVerticalScrollIndicator={false}
         numColumns={2}
         keyExtractor={(card) => card.id.toString()}
@@ -45,10 +82,18 @@ export default function CardsScreen() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginVertical: 10,
+  },
+  button: {
+    flex: 1,
+    marginHorizontal: 5,
   },
   listContainer: {
     paddingVertical: 0,

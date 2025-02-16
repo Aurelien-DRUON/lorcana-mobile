@@ -81,6 +81,7 @@ export default function CardScreen() {
   return (
     <View style={styles.container}>
       <Image source={{ uri: card.image }} style={styles.cardImage} />
+      <Text style={styles.quantityText}>Normales</Text>
       <View style={styles.quantityContainer}>
         <Button
           title="-"
@@ -92,6 +93,7 @@ export default function CardScreen() {
           onPress={() => handleQuantity(Number(cardId), "add", "normal")}
         />
       </View>
+      <Text style={styles.quantityText}>Brillantes</Text>
       <View style={styles.quantityContainer}>
         <Button
           title="-"

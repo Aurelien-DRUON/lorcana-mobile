@@ -16,6 +16,32 @@ export interface WishlistCard {
   foil_quantity: 0;
 }
 
+export const useGetWishlistCards = async (): Promise<WishlistCard[] | null> => {
+  const token = await AsyncStorage.getItem("userToken");
+  const myHeaders = new Headers();
+  myHeaders.append("Accept", "application/json");
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Authorization", `Bearer ${token}`);
+
+  const requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+  };
+
+  try {
+    const response = await fetch(
+      `https://lorcana.brybry.fr/api/wishlist`,
+      requestOptions
+    );
+    const result: { data: WishlistCard[] } = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error(error);
+  }
+
+  return null;
+};
+
 export const useGetWishlistCard = async (
   cardId: number
 ): Promise<WishlistCard | null> => {
