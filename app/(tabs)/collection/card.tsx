@@ -13,21 +13,21 @@ import {
 export default function CardScreen() {
   const { setId, cardId } = useLocalSearchParams();
   const navigation = useNavigation();
-  const [card, setCard] = useState<{
-    image?: string;
-    name?: string;
-  }>({});
+  const [card, setCard] = useState<{ image?: string; name?: string }>({});
   const [normal, setNormal] = useState<number>(0);
   const [foil, setFoil] = useState<number>(0);
   const [isWishlisted, setIsWishlisted] = useState<boolean>(false);
 
-  const handleCards = useCallback(async (setId: number, cardId: number) => {
-    const response = await useGetCard(setId, cardId);
-    if (response) {
-      setCard(response);
-      navigation.setOptions({ title: response.name });
-    }
-  }, []);
+  const handleCards = useCallback(
+    async (setId: number, cardId: number) => {
+      const response = await useGetCard(setId, cardId);
+      if (response) {
+        setCard(response);
+        navigation.setOptions({ title: response.name });
+      }
+    },
+    [navigation]
+  );
 
   const handleAccountCard = useCallback(async (cardId: number) => {
     const response = await useGetAccountCard(cardId);
@@ -39,55 +39,44 @@ export default function CardScreen() {
 
   const handleQuantity = useCallback(
     async (cardId: number, operation: string, rarity: string) => {
+      let newNormal = normal;
+      let newFoil = foil;
+
       if (operation === "add") {
-        if (rarity === "normal") {
-          await usePostOwned(cardId, normal + 1, foil);
-          await handleAccountCard(Number(cardId));
-        } else if (rarity === "foil") {
-          await usePostOwned(cardId, normal, foil + 1);
-          await handleAccountCard(Number(cardId));
-        }
+        if (rarity === "normal") newNormal += 1;
+        else if (rarity === "foil") newFoil += 1;
       } else if (operation === "substract") {
-        if (rarity === "normal") {
-          if (normal > 0) {
-            await usePostOwned(cardId, normal - 1, foil);
-            await handleAccountCard(Number(cardId));
-          }
-        } else if (rarity === "foil") {
-          if (foil > 0) {
-            await usePostOwned(cardId, normal, foil - 1);
-            await handleAccountCard(Number(cardId));
-          }
-        }
+        if (rarity === "normal" && newNormal > 0) newNormal -= 1;
+        else if (rarity === "foil" && newFoil > 0) newFoil -= 1;
       }
+
+      setNormal(newNormal);
+      setFoil(newFoil);
+      await usePostOwned(cardId, newNormal, newFoil);
     },
-    []
+    [normal, foil]
   );
 
   const handleWishlist = useCallback(async (cardId: number) => {
     const response = await useGetWishlistCard(cardId);
-    if (response) {
-      setIsWishlisted(true);
-    } else if (!response) {
-      setIsWishlisted(false);
-    }
+    setIsWishlisted(!!response);
   }, []);
 
   const handleAddWishlist = useCallback(async (cardId: number) => {
     await usePostAddWishlistCard(cardId);
-    handleWishlist(cardId);
+    setIsWishlisted(true);
   }, []);
 
   const handleRemoveWishlist = useCallback(async (cardId: number) => {
     await usePostRemoveWishlistCard(cardId);
-    handleWishlist(cardId);
+    setIsWishlisted(false);
   }, []);
 
   useEffect(() => {
     handleAccountCard(Number(cardId));
     handleCards(Number(setId), Number(cardId));
     handleWishlist(Number(cardId));
-  }, [handleCards]);
+  }, [handleAccountCard, handleCards, handleWishlist, cardId, setId]);
 
   return (
     <View style={styles.container}>
@@ -95,46 +84,34 @@ export default function CardScreen() {
       <View style={styles.quantityContainer}>
         <Button
           title="-"
-          onPress={() => {
-            handleQuantity(Number(cardId), "substract", "normal");
-          }}
+          onPress={() => handleQuantity(Number(cardId), "substract", "normal")}
         />
         <Text style={styles.quantityText}>{normal}</Text>
         <Button
           title="+"
-          onPress={() => {
-            handleQuantity(Number(cardId), "add", "normal");
-          }}
+          onPress={() => handleQuantity(Number(cardId), "add", "normal")}
         />
       </View>
       <View style={styles.quantityContainer}>
         <Button
           title="-"
-          onPress={() => {
-            handleQuantity(Number(cardId), "substract", "foil");
-          }}
+          onPress={() => handleQuantity(Number(cardId), "substract", "foil")}
         />
         <Text style={styles.quantityText}>{foil}</Text>
         <Button
           title="+"
-          onPress={() => {
-            handleQuantity(Number(cardId), "add", "foil");
-          }}
+          onPress={() => handleQuantity(Number(cardId), "add", "foil")}
         />
       </View>
       {isWishlisted ? (
         <Button
           title="Retirer de ma wishlist"
-          onPress={() => {
-            handleRemoveWishlist(Number(cardId));
-          }}
+          onPress={() => handleRemoveWishlist(Number(cardId))}
         />
       ) : (
         <Button
           title="Ajouter à ma wishlist"
-          onPress={() => {
-            handleAddWishlist(Number(cardId));
-          }}
+          onPress={() => handleAddWishlist(Number(cardId))}
         />
       )}
     </View>

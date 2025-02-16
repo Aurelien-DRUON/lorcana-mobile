@@ -56,7 +56,6 @@ export const usePostAddWishlistCard = async (
   const raw = JSON.stringify({
     card_id: cardId,
   });
-  console.log("ça marche ou quoi ?");
   const requestOptions = {
     method: "POST",
     headers: myHeaders,
