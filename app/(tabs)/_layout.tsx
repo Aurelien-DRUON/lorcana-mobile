@@ -1,32 +1,47 @@
-import { Tabs } from "expo-router";
-import React from "react";
-import { Platform } from "react-native";
+import { router, Tabs } from "expo-router";
+import { Platform, View } from "react-native";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function TabLayout() {
+  useEffect(() => {
+    const checkUserToken = async () => {
+      const userToken = await AsyncStorage.getItem("userToken");
+
+      if (!userToken) {
+        router.replace("../login");
+      }
+    };
+
+    checkUserToken();
+  }, []);
+
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: Platform.select({
-          ios: {
-            position: "absolute",
-          },
-          default: {},
-        }),
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
+    <View style={{ flex: 1 }}>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: Platform.select({
+            ios: {
+              position: "absolute",
+            },
+            default: {},
+          }),
         }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: "Explore",
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="(cards)"
+          options={{
+            title: "Cartes",
+          }}
+        />
+        <Tabs.Screen
+          name="account"
+          options={{
+            title: "Compte",
+          }}
+        />
+      </Tabs>
+    </View>
   );
 }
