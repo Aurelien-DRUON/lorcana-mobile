@@ -6,7 +6,7 @@ export interface Account {
   email: string;
 }
 
-export const useAccount = async (): Promise<Account | null> => {
+export const useGetAccount = async (): Promise<Account | null> => {
   const token = await AsyncStorage.getItem("userToken");
   const myHeaders = new Headers();
   myHeaders.append("Accept", "application/json");

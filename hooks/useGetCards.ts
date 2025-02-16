@@ -1,14 +1,22 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export interface Set {
+export interface Card {
   id: number;
+  set_id: number;
   name: string;
-  code: string;
-  release_date: string | null;
-  card_number: number;
+  version: string;
+  number: number;
+  card_identifier: string;
+  image: string;
+  thumbnail: string;
+  description: string;
+  rarity: string;
+  story: string;
+  normal_quantity: number;
+  foil_quantity: number;
 }
 
-export const useSets = async (): Promise<Set[] | null> => {
+export const useGetCards = async (id: number): Promise<Card[] | null> => {
   const token = await AsyncStorage.getItem("userToken");
   const myHeaders = new Headers();
   myHeaders.append("Accept", "application/json");
@@ -22,10 +30,10 @@ export const useSets = async (): Promise<Set[] | null> => {
 
   try {
     const response = await fetch(
-      "https://lorcana.brybry.fr/api/sets",
+      `https://lorcana.brybry.fr/api/sets/${id}/cards`,
       requestOptions
     );
-    const result: { data: Set[] } = await response.json();
+    const result: { data: Card[] } = await response.json();
     return result.data;
   } catch (error) {
     console.error(error);

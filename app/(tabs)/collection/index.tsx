@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { useSets } from "../../../hooks/useSets";
+import { View, StyleSheet, FlatList } from "react-native";
+import { useGetSets } from "../../../hooks/useGetSets";
+import Set from "../../../components/Set";
 
 export default function SetsScreen() {
   const [sets, setSets] = useState([]);
 
   const handleSets = useCallback(async () => {
-    const response = await useSets();
+    const response = await useGetSets();
     if (response) {
-      console.log(response);
       setSets(response);
     }
   }, []);
@@ -19,11 +19,13 @@ export default function SetsScreen() {
 
   return (
     <View style={styles.container}>
-      {sets.length > 0 ? (
-        sets.map((set) => <Text key={set.id}>{set.name}</Text>)
-      ) : (
-        <Text>No sets available</Text>
-      )}
+      <FlatList
+        data={sets}
+        showsVerticalScrollIndicator={false}
+        numColumns={1}
+        keyExtractor={(set) => set.id.toString()}
+        renderItem={({ item }) => <Set item={item} key={item.id} />}
+      />
     </View>
   );
 }

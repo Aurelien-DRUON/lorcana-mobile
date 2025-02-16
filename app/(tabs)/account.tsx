@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
-import { useAccount } from "../../hooks/useAccount";
+import { useGetAccount } from "../../hooks/useGetAccount";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 
@@ -8,7 +8,7 @@ export default function AccountScreen() {
   const [account, setAccount] = useState(null);
 
   const handleAccount = useCallback(async () => {
-    const response = await useAccount();
+    const response = await useGetAccount();
     if (response) {
       setAccount(response);
     }
@@ -25,8 +25,8 @@ export default function AccountScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>{account?.email}</Text>
       <Text>{account?.name}</Text>
+      <Text>{account?.email}</Text>
       <Button title="Déconnexion" onPress={handleLogout} />
     </View>
   );

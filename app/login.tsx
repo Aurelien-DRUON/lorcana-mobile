@@ -1,6 +1,6 @@
 import { View, StyleSheet, Button, TextInput } from "react-native";
 import { useState, useCallback } from "react";
-import { useLogin } from "../hooks/useLogin";
+import { usePostLogin } from "../hooks/usePostLogin";
 import { router } from "expo-router";
 
 export default function LoginScreen() {
@@ -8,7 +8,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
 
   const handleLogin = useCallback(async (email: string, password: string) => {
-    const response = await useLogin(email, password);
+    const response = await usePostLogin(email, password);
     if (response) {
       router.replace("/(tabs)/collection");
     }

@@ -19,9 +19,9 @@ export default function CardLayout() {
   return (
     <View style={{ flex: 1 }}>
       <Stack initialRouteName="index">
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="cards" options={{ headerShown: false }} />
-        <Stack.Screen name="card" options={{ headerShown: false }} />
+        <Stack.Screen name="index" options={{ title: "Ensembles" }} />
+        <Stack.Screen name="cards" options={{ title: "Cartes" }} />
+        <Stack.Screen name="card" options={{ title: "Carte" }} />
       </Stack>
     </View>
   );

@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const useLogin = async (
+export const usePostLogin = async (
   email: string,
   password: string
 ): Promise<string | null> => {
