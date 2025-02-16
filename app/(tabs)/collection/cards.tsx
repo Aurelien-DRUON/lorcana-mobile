@@ -72,6 +72,14 @@ export default function CardsScreen() {
           }
         />
         <Button
+          title="Non possédées"
+          onPress={() =>
+            setFilteredCards(
+              cards.filter((card) => !owned.some((own) => own.id === card.id))
+            )
+          }
+        />
+        <Button
           title="Voulues"
           onPress={() =>
             setFilteredCards(
