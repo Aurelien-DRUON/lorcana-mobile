@@ -6,6 +6,7 @@ import Card from "../../../components/Card";
 import { useGetSets } from "../../../hooks/useGetSets";
 import { useGetAccountCards } from "../../../hooks/useGetAccountCards";
 import { useGetWishlistCards } from "../../../hooks/useWishlist";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function CardsScreen() {
   const { id } = useLocalSearchParams();
@@ -34,7 +35,6 @@ export default function CardsScreen() {
 
   const handleWishlist = useCallback(async () => {
     const response = await useGetWishlistCards();
-    console.log(response);
     if (response) {
       setWishlist(response);
     }
@@ -50,9 +50,14 @@ export default function CardsScreen() {
   useEffect(() => {
     handleSets(Number(id));
     handleCards(Number(id));
-    handleWishlist();
-    handleOwned();
   }, [handleCards]);
+
+  useFocusEffect(
+    useCallback(() => {
+      handleWishlist();
+      handleOwned();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -89,6 +94,7 @@ export default function CardsScreen() {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
