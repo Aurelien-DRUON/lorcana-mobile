@@ -4,6 +4,11 @@ import { useGetCard } from "../../../hooks/useGetCard";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { usePostOwned } from "../../../hooks/usePostOwned";
 import { useGetAccountCard } from "../../../hooks/useGetAccountCards";
+import {
+  useGetWishlistCard,
+  usePostAddWishlistCard,
+  usePostRemoveWishlistCard,
+} from "../../../hooks/useWishlist";
 
 export default function CardScreen() {
   const { setId, cardId } = useLocalSearchParams();
@@ -14,6 +19,7 @@ export default function CardScreen() {
   }>({});
   const [normal, setNormal] = useState<number>(0);
   const [foil, setFoil] = useState<number>(0);
+  const [isWishlisted, setIsWishlisted] = useState<boolean>(false);
 
   const handleCards = useCallback(async (setId: number, cardId: number) => {
     const response = await useGetCard(setId, cardId);
@@ -35,7 +41,6 @@ export default function CardScreen() {
     async (cardId: number, operation: string, rarity: string) => {
       if (operation === "add") {
         if (rarity === "normal") {
-          console.log("normal", normal, "foil", foil);
           await usePostOwned(cardId, normal + 1, foil);
           await handleAccountCard(Number(cardId));
         } else if (rarity === "foil") {
@@ -59,9 +64,29 @@ export default function CardScreen() {
     []
   );
 
+  const handleWishlist = useCallback(async (cardId: number) => {
+    const response = await useGetWishlistCard(cardId);
+    if (response) {
+      setIsWishlisted(true);
+    } else if (!response) {
+      setIsWishlisted(false);
+    }
+  }, []);
+
+  const handleAddWishlist = useCallback(async (cardId: number) => {
+    await usePostAddWishlistCard(cardId);
+    handleWishlist(cardId);
+  }, []);
+
+  const handleRemoveWishlist = useCallback(async (cardId: number) => {
+    await usePostRemoveWishlistCard(cardId);
+    handleWishlist(cardId);
+  }, []);
+
   useEffect(() => {
     handleAccountCard(Number(cardId));
     handleCards(Number(setId), Number(cardId));
+    handleWishlist(Number(cardId));
   }, [handleCards]);
 
   return (
@@ -97,7 +122,21 @@ export default function CardScreen() {
           }}
         />
       </View>
-      <Button title="Ajouter à ma wishlist" onPress={() => {}} />
+      {isWishlisted ? (
+        <Button
+          title="Retirer de ma wishlist"
+          onPress={() => {
+            handleRemoveWishlist(Number(cardId));
+          }}
+        />
+      ) : (
+        <Button
+          title="Ajouter à ma wishlist"
+          onPress={() => {
+            handleAddWishlist(Number(cardId));
+          }}
+        />
+      )}
     </View>
   );
 }

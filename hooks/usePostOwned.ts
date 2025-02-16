@@ -15,7 +15,6 @@ export const usePostOwned = async (
     normal,
     foil,
   });
-  console.log(raw);
   const requestOptions = {
     method: "POST",
     headers: myHeaders,
@@ -28,7 +27,6 @@ export const usePostOwned = async (
       requestOptions
     );
     const result = await response.json();
-    console.log(result);
   } catch (error) {
     console.error(error);
   }
