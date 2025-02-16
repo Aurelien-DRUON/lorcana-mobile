@@ -28,11 +28,13 @@ export default function TabLayout() {
             default: {},
           }),
         }}
+        initialRouteName="collection"
       >
+        <Tabs.Screen name="index" options={{ href: null }} />
         <Tabs.Screen
-          name="(cards)"
+          name="collection"
           options={{
-            title: "Cartes",
+            title: "Collection",
           }}
         />
         <Tabs.Screen

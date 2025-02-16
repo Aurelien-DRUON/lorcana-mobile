@@ -10,7 +10,7 @@ export default function LoginScreen() {
   const handleLogin = useCallback(async (email: string, password: string) => {
     const response = await useLogin(email, password);
     if (response) {
-      router.replace("/(tabs)/(cards)/sets");
+      router.replace("/(tabs)/collection");
     }
   }, []);
 

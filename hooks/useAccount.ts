@@ -1,34 +1,24 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const useLogin = async (
-  email: string,
-  password: string
-): Promise<string | null> => {
+export const useAccount = async (): Promise<string | null> => {
+  const token = await AsyncStorage.getItem("userToken");
   const myHeaders = new Headers();
   myHeaders.append("Accept", "application/json");
   myHeaders.append("Content-Type", "application/json");
-
-  const raw = JSON.stringify({
-    email,
-    password,
-  });
+  myHeaders.append("Authorization", `Bearer ${token}`);
 
   const requestOptions = {
-    method: "POST",
+    method: "GET",
     headers: myHeaders,
-    body: raw,
   };
 
   try {
     const response = await fetch(
-      "https://lorcana.brybry.fr/api/login",
+      "https://lorcana.brybry.fr/api/me",
       requestOptions
     );
     const result = await response.json();
-    if (result.token) {
-      await AsyncStorage.setItem("userToken", result.token);
-      return result.token;
-    }
+    return result;
   } catch (error) {
     console.error(error);
   }

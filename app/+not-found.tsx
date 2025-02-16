@@ -7,7 +7,7 @@ export default function NotFoundScreen() {
       <Stack.Screen options={{ title: "Oops!" }} />
       <View>
         <Text>Hé, vous êtes pas censés être là !</Text>
-        <Link href="/">
+        <Link replace href="/(tabs)/collection">
           <Text>
             Allez retournez à l'accueil et que je ne vous y reprennes plus
           </Text>
