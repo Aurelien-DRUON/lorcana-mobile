@@ -5,6 +5,7 @@ import { useGetCards } from "../../../hooks/useGetCards";
 import Card from "../../../components/Card";
 import { useGetSets } from "../../../hooks/useGetSets";
 import { useGetAccountCards } from "../../../hooks/useGetAccountCards";
+import { useGetWishlistCards } from "../../../hooks/useWishlist";
 
 export default function CardsScreen() {
   const { id } = useLocalSearchParams();
@@ -32,7 +33,8 @@ export default function CardsScreen() {
   }, []);
 
   const handleWishlist = useCallback(async () => {
-    const response = await useGetAccountCards();
+    const response = await useGetWishlistCards();
+    console.log(response);
     if (response) {
       setWishlist(response);
     }
@@ -40,7 +42,6 @@ export default function CardsScreen() {
 
   const handleOwned = useCallback(async () => {
     const response = await useGetAccountCards();
-    console.log(response);
     if (response) {
       setOwned(response);
     }
@@ -60,13 +61,19 @@ export default function CardsScreen() {
         <Button
           title="Possédés"
           onPress={() =>
-            setFilteredCards(cards.filter((card) => owned.includes(card.id)))
+            setFilteredCards(
+              cards.filter((card) => owned.some((own) => own.id === card.id))
+            )
           }
         />
         <Button
           title="Voulues"
           onPress={() =>
-            setFilteredCards(cards.filter((card) => wishlist.includes(card.id)))
+            setFilteredCards(
+              cards.filter((card) =>
+                wishlist.some((wish) => wish.id === card.id)
+              )
+            )
           }
         />
       </View>
