@@ -1,4 +1,4 @@
-import { View, StyleSheet, Button, TextInput } from "react-native";
+import { View, StyleSheet, Button, TextInput, Text } from "react-native";
 import { useState, useCallback } from "react";
 import { usePostLogin } from "../hooks/usePostLogin";
 import { router } from "expo-router";
@@ -16,20 +16,28 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
+      <Text>Se connecter</Text>
       <TextInput
         style={styles.input}
-        placeholder="Username"
+        placeholder="Email"
         value={email}
         onChangeText={setEmail}
       />
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder="Mot de passe"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Login" onPress={() => handleLogin(email, password)} />
+      <Button title="Connexion" onPress={() => handleLogin(email, password)} />
+      <View>
+        <Text>Vous n'avez pas de compte ?</Text>
+        <Button
+          title="Créer un compte"
+          onPress={() => router.replace("/register")}
+        />
+      </View>
     </View>
   );
 }
