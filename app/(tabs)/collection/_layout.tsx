@@ -27,7 +27,7 @@ export default function CardLayout() {
               color: "gold",
             },
             headerStyle: {
-              backgroundColor: "darkslateblue",
+              backgroundColor: "indigo",
             },
           }}
         />
@@ -39,7 +39,7 @@ export default function CardLayout() {
               color: "gold",
             },
             headerStyle: {
-              backgroundColor: "darkslateblue",
+              backgroundColor: "indigo",
             },
           }}
         />
@@ -51,7 +51,7 @@ export default function CardLayout() {
               color: "gold",
             },
             headerStyle: {
-              backgroundColor: "darkslateblue",
+              backgroundColor: "indigo",
             },
           }}
         />
