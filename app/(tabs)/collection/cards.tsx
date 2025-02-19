@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Text,
+  TextInput,
 } from "react-native";
 import { useGetCards } from "../../../hooks/useGetCards";
 import Card from "../../../components/Card";
@@ -21,8 +22,9 @@ export default function CardsScreen() {
   const [filteredCards, setFilteredCards] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [owned, setOwned] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
-  const handleCards = useCallback(async (id: number) => {
+  const handleCards = useCallback(async (id) => {
     const response = await useGetCards(id);
     if (response) {
       setCards(response);
@@ -30,7 +32,7 @@ export default function CardsScreen() {
     }
   }, []);
 
-  const handleSets = useCallback(async (id: number) => {
+  const handleSets = useCallback(async (id) => {
     const response = await useGetSets();
     if (response) {
       navigation.setOptions({
@@ -65,8 +67,24 @@ export default function CardsScreen() {
     }, [])
   );
 
+  const handleSearch = (text) => {
+    setSearchText(text);
+    setFilteredCards(
+      cards.filter((card) =>
+        card.name.toLowerCase().includes(text.toLowerCase())
+      )
+    );
+  };
+
   return (
     <View style={styles.container}>
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Rechercher une carte"
+        placeholderTextColor="gold"
+        value={searchText}
+        onChangeText={handleSearch}
+      />
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
@@ -125,6 +143,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "indigo",
     padding: 10,
+  },
+  searchBar: {
+    backgroundColor: "darkslateblue",
+    borderRadius: 10,
+    padding: 10,
+    color: "gold",
+    borderWidth: 1,
+    borderColor: "gold",
   },
   buttonContainer: {
     flexDirection: "row",
