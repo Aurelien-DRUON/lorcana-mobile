@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import React from "react";
-import { TouchableOpacity, StyleSheet, Image } from "react-native";
+import { TouchableOpacity, StyleSheet, Image, Text } from "react-native";
 
 const Card = ({ item, setId }) => {
   return (
@@ -11,7 +11,7 @@ const Card = ({ item, setId }) => {
         router.push(`/(tabs)/collection/card?setId=${setId}&cardId=${item.id}`)
       }
     >
-      <Image source={{ uri: item.image }} style={{ width: 150, height: 225 }} />
+      <Image source={{ uri: item.image }} style={styles.image} />
     </TouchableOpacity>
   );
 };
@@ -24,17 +24,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
     marginVertical: 10,
-    backgroundColor: "#fff",
+    backgroundColor: "gold",
     borderRadius: 5,
-    shadowColor: "#000",
+    shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 1,
   },
-  text: {
-    fontSize: 16,
-    color: "#333",
+  image: {
+    width: 150,
+    height: 225,
+    borderRadius: 5,
   },
 });
 

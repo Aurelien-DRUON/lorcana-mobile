@@ -24,9 +24,23 @@ export default function TabLayout() {
           tabBarStyle: Platform.select({
             ios: {
               position: "absolute",
+              backgroundColor: "darkslateblue",
             },
-            default: {},
+            default: {
+              backgroundColor: "darkslateblue",
+            },
           }),
+          headerStyle: Platform.select({
+            ios: {
+              position: "absolute",
+              backgroundColor: "darkslateblue",
+            },
+            default: {
+              backgroundColor: "darkslateblue",
+            },
+          }),
+          tabBarActiveTintColor: "yellow",
+          tabBarInactiveTintColor: "gold",
         }}
         initialRouteName="collection"
       >

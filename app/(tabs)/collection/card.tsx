@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, Image, Button, View, Text } from "react-native";
+import {
+  StyleSheet,
+  Image,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { useGetCard } from "../../../hooks/useGetCard";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { usePostOwned } from "../../../hooks/usePostOwned";
@@ -43,11 +50,10 @@ export default function CardScreen() {
       let newFoil = foil;
 
       if (operation === "add") {
-        if (rarity === "normal") newNormal += 1;
-        else if (rarity === "foil") newFoil += 1;
+        rarity === "normal" ? newNormal++ : newFoil++;
       } else if (operation === "substract") {
-        if (rarity === "normal" && newNormal > 0) newNormal -= 1;
-        else if (rarity === "foil" && newFoil > 0) newFoil -= 1;
+        if (rarity === "normal" && newNormal > 0) newNormal--;
+        else if (rarity === "foil" && newFoil > 0) newFoil--;
       }
 
       setNormal(newNormal);
@@ -79,69 +85,150 @@ export default function CardScreen() {
   }, [handleAccountCard, handleCards, handleWishlist, cardId, setId]);
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Image source={{ uri: card.image }} style={styles.cardImage} />
-      <Text style={styles.quantityText}>Normales</Text>
-      <View style={styles.quantityContainer}>
-        <Button
-          title="-"
-          onPress={() => handleQuantity(Number(cardId), "substract", "normal")}
-        />
-        <Text style={styles.quantityText}>{normal}</Text>
-        <Button
-          title="+"
-          onPress={() => handleQuantity(Number(cardId), "add", "normal")}
-        />
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Possession</Text>
+        <View style={styles.quantityRow}>
+          <Text style={styles.label}>Normales :</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() =>
+              handleQuantity(Number(cardId), "substract", "normal")
+            }
+          >
+            <Text style={styles.buttonText}>-</Text>
+          </TouchableOpacity>
+          <Text style={styles.quantity}>{normal}</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleQuantity(Number(cardId), "add", "normal")}
+          >
+            <Text style={styles.buttonText}>+</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.quantityRow}>
+          <Text style={styles.label}>Brillantes :</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleQuantity(Number(cardId), "substract", "foil")}
+          >
+            <Text style={styles.buttonText}>-</Text>
+          </TouchableOpacity>
+          <Text style={styles.quantity}>{foil}</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleQuantity(Number(cardId), "add", "foil")}
+          >
+            <Text style={styles.buttonText}>+</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <Text style={styles.quantityText}>Brillantes</Text>
-      <View style={styles.quantityContainer}>
-        <Button
-          title="-"
-          onPress={() => handleQuantity(Number(cardId), "substract", "foil")}
-        />
-        <Text style={styles.quantityText}>{foil}</Text>
-        <Button
-          title="+"
-          onPress={() => handleQuantity(Number(cardId), "add", "foil")}
-        />
-      </View>
-      {isWishlisted ? (
-        <Button
-          title="Retirer de ma wishlist"
-          onPress={() => handleRemoveWishlist(Number(cardId))}
-        />
-      ) : (
-        <Button
-          title="Ajouter à ma wishlist"
-          onPress={() => handleAddWishlist(Number(cardId))}
-        />
-      )}
-    </View>
+      <TouchableOpacity
+        style={isWishlisted ? styles.wishlistRemove : styles.wishlistAdd}
+        onPress={() =>
+          isWishlisted
+            ? handleRemoveWishlist(Number(cardId))
+            : handleAddWishlist(Number(cardId))
+        }
+      >
+        <Text
+          style={
+            isWishlisted ? styles.textWishlistRemove : styles.textWishlistAdd
+          }
+        >
+          {isWishlisted ? "Retirer de la wishlist" : "Ajouter à la wishlist"}
+        </Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
     padding: 16,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "indigo",
   },
   cardImage: {
     width: 300,
     height: 450,
+    borderRadius: 10,
+    borderWidth: 3,
+    borderColor: "gold",
     marginBottom: 16,
-    borderRadius: 8,
   },
-  quantityContainer: {
+  section: {
+    backgroundColor: "darkslateblue",
+    padding: 16,
+    borderRadius: 12,
+    width: "90%",
+    alignItems: "center",
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "gold",
+    marginBottom: 10,
+  },
+  quantityRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginVertical: 8,
   },
-  quantityText: {
-    marginHorizontal: 8,
+  label: {
+    fontSize: 18,
+    color: "white",
+    marginRight: 10,
+  },
+  button: {
+    backgroundColor: "gold",
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    marginHorizontal: 5,
+  },
+  buttonText: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "black",
+  },
+  quantity: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "white",
+    marginHorizontal: 10,
+  },
+  wishlistAdd: {
+    backgroundColor: "gold",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginTop: 20,
+    alignItems: "center",
+  },
+  wishlistRemove: {
+    backgroundColor: "black",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginTop: 20,
+    alignItems: "center",
+  },
+  textWishlistAdd: {
+    color: "darkslateblue",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  textWishlistRemove: {
+    color: "gold",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
